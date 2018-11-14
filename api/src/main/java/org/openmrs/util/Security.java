@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Random;
@@ -107,13 +108,17 @@ public class Security {
 	 *
 	 * @param strToEncode string to encode
 	 * @return the SHA-1 encryption of a given string
+	 * @throws NoSuchProviderException
+	 * @throws NoSuchAlgorithmException
 	 */
-	private static String encodeStringSHA1(String strToEncode) throws APIException {
+	private static String encodeStringSHA1(String strToEncode) throws APIException, NoSuchAlgorithmException, NoSuchProviderException {
 		String algorithm = "SHA1";
 		MessageDigest md;
 		byte[] input;
+		byte[] salt = getSalt();
 		try {
 			md = MessageDigest.getInstance(algorithm);
+			md.update(salt);
 			input = strToEncode.getBytes(StandardCharsets.UTF_8);
 		}
 		catch (NoSuchAlgorithmException e) {
@@ -123,6 +128,19 @@ public class Security {
 		}
 		
 		return hexString(md.digest(input));
+	}
+
+	/**
+	 * This function adds salt using secure random generator.
+	 * @return byte array
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException
+	 */
+	public static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException{
+		SecureRandom sr = SecureRandom.getInstance("SHA1");
+		byte[] salt = new byte[16];
+		sr.nextBytes(salt);
+		return salt;
 	}
 	
 	/**

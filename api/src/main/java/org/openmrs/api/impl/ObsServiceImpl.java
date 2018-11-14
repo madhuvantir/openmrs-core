@@ -489,7 +489,9 @@ public class ObsServiceImpl extends BaseOpenmrsService implements ObsService {
 	public Obs getObsByUuid(String uuid) throws APIException {
 		Obs obsByUuid = dao.getObsByUuid(uuid);
 		if (obsByUuid != null && obsByUuid.isComplex()) {
-			return getHandler(obsByUuid).getObs(obsByUuid,ComplexObsHandler.RAW_VIEW);
+			ComplexObsHandler handler = getHandler(obsByUuid);
+			if (handler != null)
+				return handler.getObs(obsByUuid,ComplexObsHandler.RAW_VIEW);
 		}
 		return obsByUuid;
 	}

@@ -203,7 +203,17 @@ public class SourceMySqldiffFile implements CustomTaskChange {
 		if (!OpenmrsConstants.UNIX_BASED_OPERATING_SYSTEM) {
 			wd = null;
 		}
-		
+		/*
+        If cmd = cmdWithArguments[0]
+        If cmd is not there in the allowedCmds
+        list (dummy list), we should return an error value.
+        */
+        String[] cmds=new String[]{"cmd1","cmd2","cmd3"};
+        List<String>allowedCmds=Arrays.asList(cmds);
+        if(!allowedCmds.contains(cmdWithArguments[0])){
+            return -1;   
+        }
+        
 		Process p = (wd != null) ? Runtime.getRuntime().exec(cmdWithArguments, null, wd) : Runtime.getRuntime().exec(
 		    cmdWithArguments);
 		

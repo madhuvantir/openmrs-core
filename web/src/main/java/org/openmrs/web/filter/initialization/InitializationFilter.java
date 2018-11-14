@@ -1847,15 +1847,18 @@ public class InitializationFilter extends StartupFilter {
 					String tableName = tbls.getString("TABLE_NAME");
 					//if any table exist besides "liquibasechangelog" or "liquibasechangeloglock", return false
 					if (!("liquibasechangelog".equals(tableName)) && !("liquibasechangeloglock".equals(tableName))) {
+						tbls.close();
 						return false;
 					}
 				}
+				tbls.close();
 				return true;
 			}
 			catch (Exception e) {
 				//pass
 			}
 			finally {
+				tbls.close();
 				try {
 					if (connection != null) {
 						connection.close();
